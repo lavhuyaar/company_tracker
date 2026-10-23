@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+#root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  background-color: #151515;
+}
+
+/* Dark theme scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #151515;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #383838;
+  border-radius: 8px;
+  border: 2px solid #151515;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #383838 #151515;
+}
+
+/* Optional: subtle horizontal scrollbar for tables */
+.table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: #333333;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}

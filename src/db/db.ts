@@ -19,7 +19,7 @@ const db = new Dexie("FriendsDatabase") as Dexie & {
 };
 
 db.version(1).stores({
-  companies: "@id",
+  companies: "id",
 });
 
 export { db };

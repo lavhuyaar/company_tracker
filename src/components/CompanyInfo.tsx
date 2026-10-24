@@ -6,37 +6,54 @@ import type { WorkMode } from "../types/WorkMode";
 const CompanyInfo = ({
   companyId,
   companyData,
+  openModal,
 }: {
   companyId: string;
   companyData: Company;
+  openModal: (id: string) => void;
 }) => {
   const [company, dispatch] = useReducer(companyReducer, {
-    name: companyData.name,
-    webUrl: companyData.webUrl,
-    linkedInUrl: companyData.linkedInUrl,
+    name: companyData.name ?? "",
+    webUrl: companyData.webUrl ?? "",
+    linkedInUrl: companyData.linkedInUrl ?? "",
     hasApplied: companyData.hasApplied,
-    appliedDate: companyData.appliedDate,
+    appliedDate: companyData.appliedDate ?? "",
     workMode: companyData.workMode as WorkMode,
-    email: companyData.email,
+    email: companyData.email ?? "",
     additionalNote: companyData.additionalNote,
     location: companyData.location,
   });
 
   const updateCompany = async () => {
-    await db.companies.update(companyId, company);
+    try {
+      await db.companies.update(companyId, company);
+    } catch (err) {
+      console.error(
+        "There occured an error in updating company details :: ",
+        err,
+      );
+    }
   };
 
   const deleteCompany = async () => {
-    await db.companies.delete(companyId);
+    try {
+      await db.companies.delete(companyId);
+    } catch (err) {
+      console.error("There occured an error in deleting company :: ", err);
+    }
   };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       updateCompany();
-    }, 2000);
+    }, 2000); // debouncer of 2s
 
     return () => clearTimeout(timeout);
   }, [company]);
+
+  const notesOnClick = () => {
+    openModal(companyId);
+  };
 
   return (
     <>
@@ -175,26 +192,12 @@ const CompanyInfo = ({
           </select>
         </td>
 
-        <td className="border-b border-r border-white/8 p-0">
-          {/* <textarea
-          id={`additionalNote-${companyId}`}
-          name="additionalNote"
-          aria-label="Notes"
-          value={company.additionalNote}
-          placeholder="Add notes..."
-          rows={1}
-          className="block min-h-11 w-full resize-none bg-transparent px-3 py-3 text-gray-100 outline-none placeholder:text-gray-600 focus:bg-indigo-500/6 focus:ring-1 focus:ring-inset focus:ring-indigo-500"
-          onChange={(e) =>
-            dispatch({
-              type: "SET_ADD_ON_NOTE",
-              payload: e.target.value,
-            })
-          }
-        /> */}
+        <td className="border-b border-r border-white/8 p-0 relative">
           <div className="flex items-center justify-center">
             <button
               type="button"
-              title="Reset changes"
+              title="Additonal Notes"
+              onClick={notesOnClick}
               className="cursor-pointer rounded px-2.5
             py-1.5 text-xs text-gray-400 transition hover:bg-white/10
             hover:text-white"

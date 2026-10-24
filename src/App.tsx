@@ -1,12 +1,27 @@
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import CompanyInfo from "./components/CompanyInfo";
 import { db } from "./db/db";
+import NotesModal from "./components/NotesModal";
 
 const App = () => {
   const companies = useLiveQuery(() => db.companies.toArray());
 
   const addCompany = async () => {
     await db.companies.add({ id: crypto.randomUUID() });
+  };
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalCompanyId, setModalCompanyId] = useState<string>("");
+
+  const closeModal = () => {
+    setModalCompanyId("");
+    setIsOpen(false);
+  };
+
+  const openModalAndSetData = (companyId: string) => {
+    setModalCompanyId(companyId);
+    setIsOpen(true);
   };
 
   return (
@@ -63,6 +78,8 @@ const App = () => {
                   key={company.id}
                   companyId={company.id}
                   companyData={company}
+                  // additionalNote={modalData.additionalNote}
+                  openModal={openModalAndSetData}
                 />
               ))}
             </tbody>
@@ -75,6 +92,10 @@ const App = () => {
           </p>
         )}
       </div>
+
+      {isOpen && modalCompanyId && (
+        <NotesModal companyId={modalCompanyId} closeModal={closeModal} />
+      )}
     </>
   );
 };
